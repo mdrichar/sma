@@ -1,4 +1,5 @@
-#! /usr/local/bin/python
+#! /usr/bin/python
+import random
 
 #x = [2,0,2,4]
 
@@ -27,18 +28,17 @@ tests = [[2,0,2,4],[0,2,2,4],[2,0,0,0],[0,2,0,0],[0,0,2,0],[0,0,0,2],[0,0,0,0],[
 [0,4,0,4]]
 #tests = [[2,0,2,4]]
 
-for x in tests:
-        res = slide(x)
-        #print(res)
-        print (x,res)
-
-board = [i for i in range(16)]
-print(board)
+#for x in tests:
+#        res = slide(x)
+#        #print(res)
+#        print (x,res)
+#
+#board = [i for i in range(16)]
+#print(board)
 
 def pretty_print(b):
 	print(" %5d %5d %5d %5d\n %5d %5d %5d %5d\n %5d %5d %5d %5d\n %5d %5d %5d %5d\n" % tuple(b))
 	  #(b.tolist()))
-pretty_print(board)
 
 starts = {"left" : [0,4,8,12], "up" : [0,1,2,3], "right" : [3,7,11,15], "down" : [12,13,14,15]}
 offsets = {"left" : 1, "up" : 4, "right" : -1, "down" : -4}
@@ -54,17 +54,44 @@ def from_slider(board, slider, start, offset):
 		board[start+i*offset] = slider[i]
 
 dirs = ["left","right","up","down"]
-for dir in dirs:
-	print(dir)
-	for i in range(ssize):
-		print(i)
-		print(to_slider(board, starts[dir][i], offsets[dir]))
 
-for dir in dirs:
-	print(dir)
+board = [0, 2, 0, 2,
+	 2, 2, 0, 2,
+	 4, 8, 4, 8,
+	 0, 0, 2, 2]
+
+def move(board, dir):
 	for i in range(ssize):
-		cboard = board[:]
-		slider = [0,0,0,0]
-		print(i)
-		from_slider(cboard, slider, starts[dir][i], offsets[dir])
-		pretty_print(cboard)
+		slider = to_slider(board, starts[dir][i], offsets[dir])
+		slid = slide(slider)
+		from_slider(board, slid, starts[dir][i], offsets[dir])
+
+def addRandom2or4(board):
+	cells = range(ssize*ssize)
+	random.shuffle(cells)
+	print(cells)
+	trycell = 0
+	while trycell < ssize*ssize and board[cells[trycell]] != 0:
+		trycell = trycell + 1
+	if trycell == ssize*ssize: 
+		print ("No blanks")
+		return False
+	newcell = 2
+	if random.random() < 0.1:
+		newcell = 4
+	print ("Assign ", newcell, " to cell ", cells[trycell])
+	board[cells[trycell]] = newcell
+	return True 
+	
+
+pretty_print (board)
+#while (True):
+for j in range(300):
+	#cboard = board[:]
+	dir = dirs[random.randint(0,3)]
+	print(dir)
+	move(board,dir)
+	if not addRandom2or4(board):
+		print("Failed", j)
+		break
+	pretty_print(board)	
