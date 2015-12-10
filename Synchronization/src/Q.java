@@ -10,6 +10,7 @@ public class Q {
 	public synchronized String get() {
 		while (!isConsumable) {
 			try {
+				System.out.println("Calling get");
 				wait();
 			} catch (InterruptedException e) {
 				

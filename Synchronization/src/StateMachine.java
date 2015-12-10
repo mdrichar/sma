@@ -1,5 +1,5 @@
 
-public class State {
+public class StateMachine {
 	int x;
 	Q storage;
 	Request request;
@@ -7,11 +7,13 @@ public class State {
 	synchronized public void setRequest(Request request) {
 		while (request != null) {
 			try {
+				System.out.println("Waiting because request != null");
 				wait();
 			} catch (InterruptedException e) {
 				
 			}
 		}
+		System.out.println("Processing request");
 		this.request = request;
 		notifyAll();
 	}
@@ -21,12 +23,12 @@ public class State {
 	public void setStorage(Q storage) {
 		this.storage = storage;
 	}
-	State (int x) {
+	StateMachine (int x) {
 		this.x = x;
 		this.request = null;
 		this.storage = new Q();
 	}
-	State (int x, Q storage) {
+	StateMachine (int x, Q storage) {
 		this.x = x;
 		this.request = null;
 		this.storage = storage;
@@ -55,6 +57,7 @@ public class State {
 	public synchronized void log() {
 		while (request == null) {
 			try {
+				System.out.println("Waiting because request == null");
 				wait();
 			} catch (InterruptedException e) {
 				
