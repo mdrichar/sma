@@ -1,11 +1,19 @@
 
-public class StateMachine {
+public class StateMachine extends Thread {
 	int x;
+	int counter;
+	public int getCounter() {
+		return counter;
+	}
+	public void setCounter(int counter) {
+		this.counter = counter;
+	}
+
 	Q storage;
 	Request request;
 
 	synchronized public void setRequest(Request request) {
-		while (request != null) {
+		while (this.request != null) {
 			try {
 				System.out.println("Waiting because request != null");
 				wait();
@@ -62,11 +70,21 @@ public class StateMachine {
 			} catch (InterruptedException e) {
 				
 			}
-			if (request.getR() == this.x) {
-				storage.put(this.toString());
-				request = null;
-				notifyAll();
-			}
 		}
+		if (request.getR() == this.getCounter()) {
+			System.out.println("Found right state");
+			storage.put(String.valueOf(x));
+			request = null;
+			notifyAll();
+		}
+		this.counter++;
+		
 	}
+	@Override
+	public void run() {
+		// TODO Auto-generated method stub
+		super.run();
+		go();
+	}
+	
 }
